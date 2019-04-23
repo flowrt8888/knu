@@ -1,0 +1,71 @@
+import tensorflow as tf
+# 텐서플로우 임포트
+
+import tensorflow.contrib.eager as tfe
+# eager모드를 실행하기 위한 라이브러리 임포트
+
+tf.enable_eager_execution()
+# eager 모드를 실행하기 위한 선언
+
+x_train=[[1.,2.],
+         [2.,3.],
+         [3.,1.],
+         [4.,3.],
+         [5.,3.],
+         [6.,2.]]
+y_train=[[0.],
+         [0.],
+         [0.],
+         [1.],
+         [1.],
+         [1.]]
+x_test=[[5.,2.]]
+y_test=[[1.]]
+
+dataset=tf.data.Dataset.from_tensor_slices((x_train,y_train)).batch(len(x_train))
+# tf_data를 통해서 x_train의 길이만큼 batch로 학습
+
+W=tf.Variable(tf.zeros([2,1]),name='weight')
+b=tf.Variable(tf.zeros([1]),name='bias')
+#shape
+
+def logistic_regression(fearures):
+    hypothesis=tf.div(1.,1.+tf.exp(tf.matmul(features,W)+b))
+    # tf.matmul():행렬의 곱을 실행해주는 함수
+    
+    return hypothesis
+    # sigmoid값
+    
+def loss_fn(features,labels):
+    hypothesis=logistic_regression(features)
+    cost=-tf.reduce_mean(labels*tf.log(loss_fn(hypothesis)+(1-labels)*tf.log(1-hypothesis))
+    return cost
+    # label값과 hypothesis값을 통해 cost값을 구할 수 있다
+                         
+def grad(hypothesis,features,labels):
+    with tf.GradientTape() as tape:
+        loss_value=loss_fn(hypothesis,labels)
+    return tape.gradient(loss_value,[W,b])
+    # 가설의 값과 실제 값을 비교한 loss값을 구할 수 있다
+                         
+optimizer=tf.train.GradientDescentOptimizer(learning_rate=0.01)
+
+for step in range(EPOCHS):
+    for features,labels in tfe.Iterator(dataset):
+        grads=grad(logistic_regression(features),features,labels)
+        optimizer.apply_gradients(grads_and_vars=zip(grads,[W,b]))
+        # 업데이트
+        
+        if step%100==0:
+            print("Iter:(),Loss:{:.4f}".format(step,loss_fn(logistic_regression(features),labels)))
+            # Iter과 Loss 값이 줄어드는 것을 100번 마다 출력
+            
+def accuracy_fn(hypothesis,labels):
+    predicted=tf.cast(hypothesis>0.5,dtype=tf.float32)
+    accuracy=tf.reduce_mean(tf.cast(Tf.equal(predicted,labels),dtype=tf.int32))
+    return accuracy
+test_acc=accuracy_fn(logistic_regression(x_test),y_test)
+# 모델이 잘 만들어졌는지 test값을 넣어서 검증
+
+            
+            

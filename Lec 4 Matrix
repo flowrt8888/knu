@@ -1,0 +1,54 @@
+import tensorflow as tf
+# 텐서플로우를 임포트
+import numpy as np 
+# 넘피를 임포트
+
+data=np.array([
+    # x1  x2  x3  x4
+    [73.,80.,75.,152.],
+    [93.,88.,93.,185.],
+    [89.,91.,90.,180.],
+    [96.,98.,100.,196.],
+    [73.,66.,70.,142.],
+],dtype=np.float32)
+
+X=data[:,:-1]
+# slice data
+# ','을 기준으로 행과 열, ':'을 기준으로 처음과 끝
+# 5행 3열
+
+Y=data[:,[-1]]
+# 5행 1열 (여기서 [-1]은 마지막 콜롬을 뜻한다)
+
+W=tf.Variable(tf.random_normal([3,1]))
+b=tf.Variable(tf.random_normal([1]))
+
+learning_rate=0.000001
+# learning_rate는 작은값으로
+
+def predict(X):
+# 예측함수
+    return tf.matmul(X,W)+b
+
+n_epochs=2000
+for i in range(n_epochs+1):
+    # Gradient descent n_epochs+1회 수행
+    
+    with tf.GradientTape() as tape:
+    # with문 안에 있는 변수들의 변화를 tape에 기록
+    
+        cost=tf.reduce_mean(tf.square(predict(X)-Y))
+        # tf.reduce_mean() : 평균
+        # tf.square() : 제곱
+        # cost는 에러(가설과 실제 데이터의 차이) 제곱의 평균
+        
+    W_grad,b_grad=tape.gradient(cost,[W,b])
+    # W에 대한 gradient(미분값)는 W_grad에, b에 대한 gradient는 b_grad에
+    
+    W.assign_sub(learning_rate*W_grad)
+    b.assign_sub(learning_rate*b_grad)
+    # 값 갱신
+    
+    if i%100==0:
+        print("{:5}|{:10.4f}".format(i,cost.numpy()))
+        # cost값의 변화를 100번에 한번씩 출력

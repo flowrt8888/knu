@@ -1,0 +1,27 @@
+import numpy as np
+# 넘피를 임포트
+
+X=np.array([1,2,3])
+Y=np.array([1,2,3])
+# x 데이터는 압력, y 데이터는 출력
+# 입력과 출력이 동일한 모델을 만들것임
+
+def cost_func(W,X,Y):
+# 데이터 X,Y에 대해서 W값이 주어졌을 때 cost를 계산하는 함수
+    hypothesis=X*W
+    # 가설함수 H(x)=Wx+b
+    
+    return tf.reduce_mean(tf.square(hypothesis-Y))
+    # tf.reduce_mean() : 평균
+    # tf.square() : 제곱
+    # cost는 에러(가설과 실제 데이터의 차이) 제곱의 평균
+    
+W_values=np.linspace(-3,5,num=15)
+# -3에서 5까지 15개의 구간값을 가지게 됨
+cost_values=[]
+
+for feed_W in W_values:
+  curr_cost=cost_func(feed_W,X,Y)
+  # feed_W값에 따라서 cost값이 얼마가 나오는지
+  cost_values.append(curr_cost)
+  print("{:6.3f}|{:10.5f}",format(feed_W,curr_cost))

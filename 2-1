@@ -1,0 +1,44 @@
+import tensorflow as tf # 텐서플로우를 임포트
+
+x_data=[1,2,3,4,5]
+y_data=[1,2,3,4,5]
+# x 데이터는 압력, y 데이터는 출력
+# 입력과 출력이 동일한 모델을 만들것임
+
+W=tf.Variable(2.9)
+b=tf.Variable(0.5)
+# W와 b를 정의한다.
+# 각각 2.9, 0.5로 초깃값 지정
+
+
+# Gradient descent
+# minimize cost(W,b)
+
+learning_rate=0.01
+# learning_rate 상수로 지정
+
+for i in range(100):
+# 업데이트 100번 반복
+
+    with tf.GradientTape() as tape:
+    # with문 안에 있는 변수들의 변화(W와 b)를 tape에 기록
+    
+        hypothesis=W*x_data+b
+        # 가설함수 H(x)=Wx+b
+        
+        cost=tf.reduce_mean(tf.square(hypothesis-y_data))
+        # tf.reduce_mean() : 평균
+        # tf.square() : 제곱
+        # cost는 에러(가설과 실제 데이터의 차이) 제곱의 평균
+        
+    W_grad, b_grad=tape.gradient(cost,[W,b])
+    # W에 대한 gradient(미분값)는 W_grad에, b에 대한 gradient는 b_grad에
+    
+    W.assign_sub(learning_rate*W_grad)
+    b.assign_sub(learning_rate*b_grad)
+    # W와 b 업데이트
+    # A.assign_sub(B) : A=A-B
+    
+    if i%10==0:
+        print("{:5}|{:10.4}|{:10.4}|{:10.6f}".format(i, W.numpy(), b.numpy(), cost))
+        # W와 b가 어떻게 변하는지 10번에 한번씩 확인
